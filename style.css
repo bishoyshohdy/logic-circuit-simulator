@@ -1,0 +1,109 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Prevent body scrollbars */
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+}
+
+body {
+    display: flex;
+    flex-direction: row; /* Change to row for sidebar layout */
+    align-items: stretch; /* Stretch items vertically */
+}
+
+#left-sidebar {
+    width: 160px; /* Fixed width for sidebar */
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+    background-color: #e9ecef; /* Light grey background */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #ccc;
+    overflow-y: auto; /* Add scroll if controls exceed height */
+}
+
+.controls {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 8px; /* Spacing between buttons/hr */
+    align-items: stretch; /* Make buttons stretch horizontally */
+}
+
+.controls hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 5px 0; /* Add some vertical space around HR */
+}
+
+.controls button {
+    width: 100%; /* Make buttons fill sidebar width */
+    box-sizing: border-box; /* Include padding/border in width */
+}
+
+button {
+    padding: 8px 12px; /* Adjusted padding */
+    font-size: 0.9em; /* Slightly smaller default button size */
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Canvas container to handle overlays */
+#canvas-container {
+    position: relative;
+    flex-grow: 1; /* Allow canvas container to fill remaining space */
+    overflow: hidden; /* Clip anything outside the container */
+    background-color: #fff; /* Give it a background */
+}
+
+canvas {
+    display: block; /* Remove potential extra space below canvas */
+    width: 100%;   /* Fill container width */
+    height: 100%;  /* Fill container height */
+    /* border: 1px solid #ccc; - Handled by container */
+    /* background-color: #fff; - Handled by container */
+    /* box-shadow: 2px 2px 5px rgba(0,0,0,0.1); - Removed shadow */
+    /* position: relative; - Moved to container */
+}
+
+#status-indicators {
+    position: absolute;
+    bottom: 10px; 
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #555;
+    pointer-events: none; /* Prevent interfering with canvas events */
+}
+
+#view-controls {
+    position: absolute;
+    top: 10px; 
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#view-controls button {
+    padding: 5px 8px;
+    font-size: 1.1em;
+    min-width: 30px; /* Ensure buttons have some width */
+    background-color: rgba(0, 123, 255, 0.8);
+    border: 1px solid rgba(0, 123, 255, 0.9);
+}
+
+#view-controls button:hover {
+    background-color: rgba(0, 86, 179, 0.9);
+} 

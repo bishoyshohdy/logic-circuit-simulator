@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Circuit Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Removed H1 Title -->
+
+    <!-- Left Sidebar for Controls -->
+    <div id="left-sidebar">
+        <div class="controls">
+            <button id="add-input">Add Input</button>
+            <button id="add-output">Add Output</button>
+            <hr>
+            <button id="add-and">Add AND</button>
+            <button id="add-or">Add OR</button>
+            <button id="add-not">Add NOT</button>
+            <button id="add-xor">Add XOR</button>
+            <hr>
+            <button id="simulate">Simulate</button>
+            <button id="reset">Reset Circuit</button>
+            <button id="delete-selected" style="background-color: #dc3545;">Delete Selected</button>
+        </div>
+    </div>
+
+    <!-- Canvas container for relative positioning and flex growth -->
+    <div id="canvas-container">
+        <canvas id="circuit-canvas"></canvas>
+
+        <!-- Status Indicators -->
+        <div id="status-indicators">
+            Zoom: <span id="zoom-level">1.00x</span> | 
+            Offset: (<span id="offset-x">0</span>, <span id="offset-y">0</span>)
+        </div>
+
+        <!-- View Controls -->
+        <div id="view-controls">
+            <button id="zoom-in">+</button>
+            <button id="zoom-out">-</button>
+            <button id="reset-view">Home</button>
+        </div>
+    </div> <!-- End canvas-container -->
+
+    <script src="script.js"></script>
+</body>
+</html> 
