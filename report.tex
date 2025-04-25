@@ -1,0 +1,323 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{titling}
+\usepackage{enumitem}
+
+% --- Page Geometry ---
+\geometry{a4paper, margin=1in}
+
+% --- Hyperlink Setup ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Logic Circuit Simulator Report},
+    pdfpagemode=FullScreen,
+    }
+
+% --- Code Listing Style ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=JavaScript % Assuming JS is the primary language for snippets
+}
+\lstset{style=mystyle}
+
+% --- Title Page Information --- 
+\title{Logic Circuit Simulator: Project Report}
+\author{
+    Bishoy Magdy (221521) \\
+    Mahmoud Bahaa Eldeen (210733)
+}
+\date{Spring 2025}
+
+% Custom fields for title page
+\pretitle{\begin{center}\LARGE}
+\posttitle{\par\end{center}\vskip 0.5em}
+\preauthor{\begin{center}\large}
+\postauthor{\par\end{center}\vskip 0.5em}
+\predate{\begin{center}\large}
+\postdate{\par\end{center}}
+
+\newcommand{\course}{Advanced Topics in Computer Engineering (CSE5636/ECE5434)}
+\newcommand{\supervisor}{Dr. Ghada Abdelmouez}
+\newcommand{\university}{MSA University}
+\newcommand{\faculty}{Faculty of Engineering}
+
+% --- Document Start ---
+\begin{document}
+
+% --- Custom Title Page --- 
+\begin{titlepage}
+    \maketitle
+    \vfill % Pushes content to center/bottom
+    \begin{center}
+        \large
+        \textbf{Course:} \course \par
+        \vskip 1em
+        \textbf{Supervisor:} \supervisor \par
+        \vskip 1em
+        \textbf{University:} \university \par
+        \textbf{Faculty:} \faculty \par
+    \end{center}
+\end{titlepage}
+
+% --- Table of Contents ---
+\tableofcontents
+\newpage
+
+% --- Introduction ---
+\section{Introduction}
+This report details a web-based logic circuit simulator built using HTML, CSS, and vanilla JavaScript, utilizing the Canvas API for rendering. The application allows users to design, manipulate, and simulate basic digital logic circuits, including the creation and reuse of custom components.
+
+% --- Features ---
+\section{Features}
+The simulator includes the following key features:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Component Palette:}
+    \begin{itemize}
+        \item Add Input sources (toggleable 0/1).
+        \item Add Output probes (display result).
+        \item Add Clock sources (toggle 0/1 at a user-defined frequency).
+        \item Add basic logic gates: AND, OR, NOT, XOR, NAND, NOR.
+    \end{itemize}
+    \item \textbf{Custom Components:}
+    \begin{itemize}
+        \item Select a group of connected components (including Inputs/Outputs defining the interface).
+        \item Save the selection as a reusable, named Custom Component.
+        \item Custom components appear in the sidebar under "Custom".
+        \item Add instances of saved custom components to the canvas.
+        \item Custom component definitions are saved in the browser's LocalStorage and reloaded on startup.
+        \item Delete custom component definitions (and all their instances) using the 'X' button in the sidebar.
+    \end{itemize}
+    \item \textbf{Canvas Interface:}
+    \begin{itemize}
+        \item Drag and drop components to arrange the circuit.
+        \item Click on Input components to toggle their state (0/1).
+        \item Connect components by clicking and dragging from an output node (right side) to an input node (left side).
+        \item Pan the view by clicking and dragging with the middle mouse button.
+        \item Zoom the view using the mouse wheel or the +/- buttons.
+    \end{itemize}
+    \item \textbf{Selection:}
+    \begin{itemize}
+        \item Click a component to select it.
+        \item Hold \textbf{Shift} and click components to add/remove them from the selection.
+        \item Click and drag on the background to create a marquee selection box (hold Shift to add to selection).
+    \end{itemize}
+    \item \textbf{Editing:}
+    \begin{itemize}
+        \item Delete selected components using the \textbf{Delete} key or the "Delete Selected" button.
+        \item Copy selected components with \textbf{Ctrl+C}.
+        \item Paste copied components near the center of the view with \textbf{Ctrl+V} (connections are not copied).
+    \end{itemize}
+    \item \textbf{Simulation:}
+    \begin{itemize}
+        \item Continuous simulation: Circuit state updates automatically whenever an input changes, a clock ticks, or the circuit structure is modified.
+        \item Output components display the calculated result (0 or 1, or '-' if undefined).
+        \item Custom components are simulated based on their internal saved structure.
+    \end{itemize}
+    \item \textbf{View Controls:}
+    \begin{itemize}
+        \item Zoom buttons (+/-).
+        \item "Home" button to reset the view (pan/zoom).
+        \item Status indicators display the current zoom level and pan offset.
+    \end{itemize}
+    \item \textbf{Reset:} Clear the entire circuit (including custom definitions) and reset the view using the "Reset Circuit" button.
+\end{itemize}
+
+% --- Implementation Details ---
+\section{Implementation Details}
+
+\subsection{HTML Structure (index.html)}
+The main structure is defined in \texttt{index.html}. It uses standard HTML5 elements and is organized into two main parts within the body:
+\begin{itemize}
+    \item A fixed-width left sidebar (\texttt{#left-sidebar}) containing controls for adding components (Inputs, Outputs, Clocks, Gates), managing custom components, and general actions (Reset, Delete, Save Selection).
+    \item A main canvas container (\texttt{#canvas-container}) which holds the HTML5 \texttt{<canvas>} element where the circuit is drawn and interacted with. This container also holds absolutely positioned elements for status indicators and view controls.
+\end{itemize}
+The HTML links to the \texttt{style.css} stylesheet and the \texttt{script.js} JavaScript file.
+
+\subsection{CSS Styling (style.css)}
+The visual appearance is controlled by \texttt{style.css}. Key aspects include:
+\begin{itemize}
+    \item \textbf{Layout:} Flexbox is used to arrange the sidebar and canvas container, ensuring the canvas fills the available space.
+    \item \textbf{Typography \& Color:} A modern system font stack is used. A clean color palette with standard blues and reds for interactive elements and neutral grays/whites for backgrounds is employed.
+    \item \textbf{Sidebar Styling:} Buttons are styled for consistency with hover effects. The custom component list uses flexbox to align the component name button and the delete button.
+    \item \textbf{Canvas Overlays:} Status indicators and view controls are positioned absolutely over the canvas container using CSS.
+    \item \textbf{Responsiveness:} Basic overflow handling is included, but the design is primarily desktop-focused.
+\end{itemize}
+
+\subsection{JavaScript Logic (script.js)}
+The core interactivity and simulation logic resides in \texttt{script.js}. Key elements include:
+\begin{itemize}
+    \item \textbf{Data Structures:} Arrays hold the primary circuit elements (\texttt{gates}, \texttt{inputs}, \texttt{outputs}, \texttt{clocks}, \texttt{connections}, \texttt{customComponentInstances}). Custom component definitions are stored in \texttt{customComponentDefinitions}. Maps like \texttt{clockIntervals} manage active timers.
+    \item \textbf{Canvas Rendering (\texttt{drawCircuit}):} Uses the Canvas 2D API to draw all components, nodes, and connections based on their state and type. It handles viewport transformations (pan/zoom) and highlights selected items.
+    \item \textbf{Event Handling:} Event listeners on the canvas and window manage mouse actions (click, drag for panning/selection/connection, wheel for zoom) and keyboard shortcuts (Delete, Ctrl+C, Ctrl+V).
+    \item \textbf{Simulation (\texttt{simulate}):} Implements an iterative simulation algorithm. It calculates node values based on connected component outputs until the circuit state stabilizes or reaches a maximum iteration count. 
+        \begin{itemize}
+            \item Initializes input/clock values and defaults gate outputs to 0.
+            \item Iteratively processes basic gates using \texttt{calculateGateOutput}.
+            \item Simulates custom component instances by running a nested simulation loop on their cloned internal structure, propagating values between the external interface and internal nodes.
+            \item Updates Output component values based on the final state of connected nodes.
+        \end{itemize}
+    \item \textbf{Component Management:} Functions like \texttt{addGate}, \texttt{addInput}, \texttt{addOutput}, \texttt{addClock} create new component objects. \texttt{deleteSelected} removes components and their connections, including clearing clock timers.
+    \item \textbf{Custom Components:} 
+        \begin{itemize}
+             \item \texttt{saveSelectionAsComponent}: Identifies internal gates/connections and interface nodes, clones the structure, calculates relative positions, and saves the definition to \texttt{customComponentDefinitions} and LocalStorage.
+             \item \texttt{addCustomComponentInstance}: Clones the internal structure from a saved definition, creates unique IDs for internal elements, establishes mapping between external and internal nodes, and adds the instance to the canvas.
+             \item \texttt{removeCustomComponent}: Deletes a definition and all its instances, updating the UI and LocalStorage.
+             \item \texttt{loadCustomDefinitions}: Loads saved definitions from LocalStorage on startup.
+        \end{itemize}
+    \item \textbf{Clock Logic:} The \texttt{addClock} function sets up \texttt{setInterval} to toggle the clock's value and trigger simulation. Interval IDs are managed for proper cleanup during deletion or reset.
+    \item \textbf{Helper Functions:} Various helpers manage coordinate transformations (\texttt{screenToWorld}), hit detection (\texttt{findNodeAt}, \texttt{findComponentAt}), node position calculation (\texttt{getNodePositions}), etc.
+\end{itemize}
+
+% --- Usage ---
+\section{Usage}
+Follow these steps to use the simulator:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Add Components:} Use the buttons in the left sidebar to add inputs, outputs, clocks, or logic gates. They will appear near the center of your current view. For Clocks, you'll be prompted for the period in milliseconds.
+    \item \textbf{Arrange:} Click and drag components to position them.
+    \item \textbf{Connect:} Click and hold on an output node (small circle on the right of an input, clock, or gate), drag the line to an input node (small circle on the left of a gate or output), and release.
+    \item \textbf{Set Inputs:} Click on the square "INPUT" components to toggle their value between 0 (red) and 1 (green).
+    \item \textbf{Observe Simulation:} The simulation runs automatically. Output components (circles) and Clock components will update their color and text based on the circuit state.
+    \item \textbf{Navigate:}
+    \begin{itemize}
+        \item Use the mouse wheel or +/- buttons to zoom.
+        \item Hold the middle mouse button and drag to pan.
+        \item Click "Home" to reset the view.
+    \end{itemize}
+    \item \textbf{Select & Edit:}
+    \begin{itemize}
+        \item Click to select one component.
+        \item Shift+Click or drag a box to select multiple.
+        \item Press Delete or the "Delete Selected" button to remove selected items.
+        \item Use Ctrl+C and Ctrl+V to copy/paste selected items (excluding custom components).
+    \end{itemize}
+    \item \textbf{Custom Components:}
+    \begin{itemize}
+        \item \textbf{Create:} Select the gates, inputs, and outputs that make up your desired component. Ensure the selection includes at least one INPUT or OUTPUT block to define the external interface. Click "Save Selection". Enter a unique name.
+        \item \textbf{Use:} The saved component name will appear in the sidebar under "Custom". Click its button to add an instance to the canvas.
+        \item \textbf{Delete:} Click the 'X' button next to a custom component's name in the sidebar to remove its definition and all instances from the circuit and LocalStorage.
+    \end{itemize}
+\end{enumerate}
+
+% --- Future Enhancements ---
+\section{Future Enhancements}
+Potential improvements and future features include:
+\begin{itemize}[leftmargin=*]
+    \item Ability to modify Clock frequency after creation.
+    \item Visual indication of signal state (0/1) on wires.
+    \item Ability to delete individual connections.
+    \item Labels for components.
+    \item Saving and loading entire circuits (including custom components) to/from files.
+    \item Multi-output nodes / wire splitting.
+    \item Improved styling and visual feedback (hover effects, node highlighting).
+    \item Support for nested custom components.
+    \item More gate types (e.g., buffers, tri-state buffers).
+    \item Undo/Redo functionality.
+\end{itemize}
+
+% --- Conclusion ---
+\section{Conclusion}
+This project successfully implements a functional logic circuit simulator with a graphical interface using HTML Canvas and JavaScript. It supports basic logic gates, clock inputs, user-defined custom components with LocalStorage persistence, and a continuous simulation model capable of handling combinational and basic sequential circuits (like latches). The user interface provides standard features like drag-and-drop, panning, zooming, selection, and copy/paste. While functional, areas for future improvement include enhanced visualization, more complex components, and file-based saving/loading.
+
+% --- Appendix (Optional Code Snippets) ---
+\appendix
+\section{Code Snippets}
+
+\subsection{Simulation Loop Core}
+\begin{lstlisting}[caption={Core structure of the main simulation loop}, label={lst:simulate}]
+function simulate() {
+    // ... Initialization (nodeValues map, etc.) ...
+
+    changed = true; // Force first iteration
+    while (changed && iterations < MAX_ITERATIONS) {
+        changed = false; 
+        iterations++;
+
+        // --- Process Basic Gates ---
+        gates.forEach(gate => { /* ... calculate output, update nodeValues, set changed=true if needed ... */ });
+
+        // --- Process Custom Component Instances ---
+        customComponentInstances.forEach(instance => {
+            // ... Initialize internalNodeValues ...
+            // ... Propagate external inputs to internal nodes ...
+
+            // --- Internal Simulation Loop ---
+            while (internalChanged && internalIterations < MAX_INTERNAL_ITERATIONS) {
+                // ... Process internal gates, update internalNodeValues ... 
+            }
+
+            // ... Propagate internal outputs to external nodes (update nodeValues, set changed=true if needed) ...
+        });
+    }
+
+    // ... Update Output component values ...
+    drawCircuit();
+}
+\end{lstlisting}
+
+\subsection{Custom Component Saving (Excerpt)}
+\begin{lstlisting}[caption={Identifying internal connections during custom component saving}, label={lst:save_internal_conn}]
+function saveSelectionAsComponent() {
+    // ... Identify internalGates, externalInputs, externalOutputs ...
+    
+    let internalConnections = [];
+    const selectedItemIds = new Set(selectedItems.map(item => item.id));
+    const interfaceInputIds = new Set(externalInputs.map(item => item.id));
+    const interfaceOutputIds = new Set(externalOutputs.map(item => item.id));
+
+    connections.forEach(conn => { 
+        const startParentId = conn.startNode.parent?.id;
+        const endParentId = conn.endNode.parent?.id;
+
+        if (startParentId && selectedItemIds.has(startParentId) &&
+            endParentId && selectedItemIds.has(endParentId)) {
+
+            // Exclude connections from interface Inputs or to interface Outputs
+            if (!interfaceInputIds.has(startParentId) && !interfaceOutputIds.has(endParentId)) {
+                 internalConnections.push({
+                    startNodeId: conn.startNode.id, // Original node ID
+                    endNodeId: conn.endNode.id      // Original node ID
+                 });
+            }
+        }
+    });
+    
+    // ... Define external interface mapping ...
+    // ... Create and save definition object ...
+}
+\end{lstlisting}
+
+
+% --- Document End ---
+\end{document} 

@@ -293,6 +293,11 @@ function handleMouseMove(event) {
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
+    // --- Debugging ---
+    console.log(`ClientXY: ${event.clientX}, ${event.clientY}`);
+    console.log(`Rect L/T: ${rect.left}, ${rect.top}`);
+    console.log(`MouseXY Rel: ${mouseX}, ${mouseY}`);
+    // --- End Debugging ---
     const worldCoords = screenToWorld(mouseX, mouseY);
 
     // Handle Panning
@@ -1196,7 +1201,8 @@ function drawCircuit() {
 // --- Initial Setup ---
 // Function to handle canvas resizing
 function resizeCanvas() {
-    const dpr = window.devicePixelRatio || 1;
+    // const dpr = window.devicePixelRatio || 1;
+    const dpr = 1; // Force DPR to 1
     const displayWidth = canvas.clientWidth;
     const displayHeight = canvas.clientHeight;
 
@@ -1204,7 +1210,7 @@ function resizeCanvas() {
     if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
         canvas.width = displayWidth * dpr;
         canvas.height = displayHeight * dpr;
-        console.log(`Canvas resized (DPR ${dpr}): ${canvas.width}x${canvas.height}`);
+        console.log(`Canvas resized (Forced DPR ${dpr}): ${canvas.width}x${canvas.height}`);
         
         // We don't need ctx.scale(dpr, dpr) here.
         // The browser handles scaling the larger buffer down to the CSS display size.
